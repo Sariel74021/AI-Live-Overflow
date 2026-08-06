@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    background: transparent;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  #stage {
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  #pet {
+    width: 88%;
+    height: 92%;
+    transform-origin: 50% 100%;
+    animation: float 3.2s ease-in-out infinite;
+  }
+  #pet.jump { animation: jump 0.55s ease-out; }
+  #pet.angry .ear-l { animation: earAngryL 0.8s ease-out forwards; }
+  #pet.angry .ear-r { animation: earAngryR 0.8s ease-out forwards; }
+  #pet.angry #mouth { d: path("M92,150 Q100,142 108,150"); }
+  #pet.angry #browL { transform: rotate(12deg); transform-origin: 82px 128px; }
+  #pet.angry #browR { transform: rotate(-12deg); transform-origin: 118px 128px; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+  }
+  @keyframes jump {
+    0% { transform: translateY(0) scale(1, 1); }
+    30% { transform: translateY(-26px) scale(0.98, 1.02); }
+    60% { transform: translateY(0) scale(1.05, 0.94); }
+    80% { transform: translateY(-8px) scale(1, 1); }
+    100% { transform: translateY(0) scale(1, 1); }
+  }
+  @keyframes blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    96% { transform: scaleY(0.08); }
+  }
+  @keyframes tailWag {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-14deg); }
+  }
+  @keyframes earTwitch {
+    0%, 100% { transform: rotate(0deg); }
+    90% { transform: rotate(0deg); }
+    93% { transform: rotate(-8deg); }
+    96% { transform: rotate(0deg); }
+  }
+  @keyframes earAngryL {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-18deg); }
+  }
+  @keyframes earAngryR {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(18deg); }
+  }
+  @keyframes heartFloat {
+    0% { transform: translateY(0) scale(0.4); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(-70px) scale(1.1); opacity: 0; }
+  }
+  #tail { transform-origin: 118px 168px; animation: tailWag 1.6s ease-in-out infinite; }
+  .eye { transform-origin: center; animation: blink 4.2s infinite; }
+  .ear-l { transform-origin: 70px 108px; animation: earTwitch 5.5s ease-in-out infinite; }
+  .ear-r { transform-origin: 130px 108px; animation: earTwitch 6.3s ease-in-out infinite; }
+  #blush { opacity: 0; transition: opacity 0.3s; }
+  #pet.flush #blush { opacity: 0.85; }
+  #browL, #browR { transition: transform 0.3s; }
+
+  #bubble {
+    position: absolute;
+    left: 50%; top: 4%;
+    transform: translateX(-50%);
+    max-width: 92%;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1.5px solid #d8d3e8;
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: #3a3450;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  #bubble.show { opacity: 1; }
+  #hearts { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+  .heart {
+    position: absolute;
+    font-size: 16px;
+    animation: heartFloat 1.4s ease-out forwards;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bubble"></div>
+  <svg id="pet" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="faceGrad" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#FFF3EA"/>
+        <stop offset="100%" stop-color="#FFE3D0"/>
+      </radialGradient>
+      <linearGradient id="shirtGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FFFFFF"/>
+        <stop offset="100%" stop-color="#EDEAF5"/>
+      </linearGradient>
+      <linearGradient id="hairGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FFFFFF"/>
+        <stop offset="100%" stop-color="#E8E6F2"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 尾巴 -->
+    <g id="tail">
+      <path d="M128,180 Q166,158 160,120 Q154,106 140,110 Q128,114 128,132 Q128,160 118,182 Z"
+            fill="#FFFFFF" stroke="#E4E1F0" stroke-width="1.5"/>
+      <path d="M150,128 Q154,118 142,116" fill="none" stroke="#E4E1F0" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    <!-- 身体：白衬衫 -->
+    <path d="M62,186 Q58,142 80,128 L120,128 Q142,142 138,186 Z"
+          fill="url(#shirtGrad)" stroke="#D9D4E8" stroke-width="1.5"/>
+    <!-- 衬衫领 -->
+    <path d="M88,130 L100,146 L112,130 L108,124 L100,130 L92,124 Z"
+          fill="#FFFFFF" stroke="#D9D4E8" stroke-width="1.2"/>
+    <line x1="100" y1="146" x2="100" y2="158" stroke="#C9C3DC" stroke-width="1.5"/>
+    <!-- 纽扣 -->
+    <circle cx="100" cy="150" r="2" fill="#C9C3DC"/>
+    <circle cx="100" cy="160" r="2" fill="#C9C3DC"/>
+    <!-- 手臂 -->
+    <path d="M66,140 Q52,152 56,170 Q58,178 66,174 Q72,170 72,158 Z"
+          fill="url(#shirtGrad)" stroke="#D9D4E8" stroke-width="1.2"/>
+    <path d="M134,140 Q148,152 144,170 Q142,178 134,174 Q128,170 128,158 Z"
+          fill="url(#shirtGrad)" stroke="#D9D4E8" stroke-width="1.2"/>
+
+    <!-- 头 -->
+    <ellipse cx="100" cy="112" rx="42" ry="38" fill="url(#faceGrad)"/>
+
+    <!-- 狐耳（右） -->
+    <g class="ear-r">
+      <path d="M116,80 Q130,44 148,54 Q152,58 146,72 Q140,84 126,88 Z"
+            fill="url(#hairGrad)" stroke="#E4E1F0" stroke-width="1.5"/>
+      <path d="M124,80 Q132,58 142,60 Q146,62 141,72 Q137,80 128,84 Z"
+            fill="#F6C0CE"/>
+    </g>
+    <!-- 狐耳（左） -->
+    <g class="ear-l">
+      <path d="M84,80 Q70,44 52,54 Q48,58 54,72 Q60,84 74,88 Z"
+            fill="url(#hairGrad)" stroke="#E4E1F0" stroke-width="1.5"/>
+      <path d="M76,80 Q68,58 58,60 Q54,62 59,72 Q63,80 72,84 Z"
+            fill="#F6C0CE"/>
+    </g>
+
+    <!-- 白发 -->
+    <path d="M58,112 Q54,74 76,60 Q88,52 100,54 Q112,52 124,60 Q146,74 142,112
+             L138,118 Q132,92 124,84 Q118,96 116,112 L116,120 Q116,140 100,146
+             Q84,140 84,120 L84,112 Q82,96 76,84 Q68,92 62,118 Z"
+          fill="url(#hairGrad)"/>
+    <!-- 发尾长刘海 -->
+    <path d="M58,112 Q52,120 56,136 Q60,142 64,132 Q66,122 62,114 Z" fill="url(#hairGrad)"/>
+    <path d="M142,112 Q148,120 144,136 Q140,142 136,132 Q134,122 138,114 Z" fill="url(#hairGrad)"/>
+
+    <!-- 眉毛 -->
+    <line id="browL" x1="74" y1="126" x2="92" y2="124" stroke="#C9B8A8" stroke-width="2.5" stroke-linecap="round"/>
+    <line id="browR" x1="108" y1="124" x2="126" y2="126" stroke="#C9B8A8" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- 眼睛 -->
+    <g class="eye">
+      <ellipse cx="83" cy="136" rx="5.5" ry="6.5" fill="#C8892F"/>
+      <ellipse cx="83" cy="134" rx="2" ry="2.2" fill="#FFFFFF"/>
+      <ellipse cx="83" cy="139" rx="1.6" ry="1.8" fill="#7A4E14"/>
+    </g>
+    <g class="eye">
+      <ellipse cx="117" cy="136" rx="5.5" ry="6.5" fill="#C8892F"/>
+      <ellipse cx="117" cy="134" rx="2" ry="2.2" fill="#FFFFFF"/>
+      <ellipse cx="117" cy="139" rx="1.6" ry="1.8" fill="#7A4E14"/>
+    </g>
+
+    <!-- 腮红 -->
+    <g id="blush">
+      <ellipse cx="70" cy="148" rx="9" ry="5" fill="#F8A8B8" opacity="0.7"/>
+      <ellipse cx="130" cy="148" rx="9" ry="5" fill="#F8A8B8" opacity="0.7"/>
+    </g>
+
+    <!-- 嘴 -->
+    <path id="mouth" d="M92,152 Q100,158 108,152" fill="none" stroke="#C8892F"
+          stroke-width="2.2" stroke-linecap="round"/>
+  </svg>
+  <div id="hearts"></div>
+</div>
+
+<script>
+(function () {
+  var pet = document.getElementById('pet');
+  var bubble = document.getElementById('bubble');
+  var hearts = document.getElementById('hearts');
+  var bubbleTimer = null;
+  var angryTimer = null;
+
+  var taps = [
+    '嗯？我在。',
+    '戳我干嘛。',
+    '……有事说事。',
+    '别闹，我看着你呢。'
+  ];
+  var doubles = [
+    '……耳朵只有你能碰。',
+    '……你倒是会挑地方戳。',
+    '……再戳，我可就记下了。',
+    '……'
+  ];
+  var longs = [
+    '……疼。',
+    '属狗的吗你。',
+    '……我记仇了。',
+    '再按，我可要还手了。'
+  ];
+
+  function say(text) {
+    bubble.textContent = text;
+    bubble.classList.add('show');
+    if (bubbleTimer) clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(function () {
+      bubble.classList.remove('show');
+    }, 1600);
+  }
+
+  function spawnHeart() {
+    var h = document.createElement('div');
+    h.className = 'heart';
+    h.textContent = '♥';
+    h.style.left = (30 + Math.random() * 40) + '%';
+    h.style.top = (35 + Math.random() * 15) + '%';
+    h.style.color = ['#F48FB1', '#F06292', '#FF8A80'][Math.floor(Math.random() * 3)];
+    hearts.appendChild(h);
+    setTimeout(function () { h.remove(); }, 1500);
+  }
+
+  function onTap() {
+    pet.classList.remove('jump');
+    void pet.offsetWidth;
+    pet.classList.add('jump');
+    say(taps[Math.floor(Math.random() * taps.length)]);
+  }
+
+  function onDoubleTap() {
+    pet.classList.add('flush');
+    say(doubles[Math.floor(Math.random() * doubles.length)]);
+    for (var i = 0; i < 3; i++) {
+      setTimeout(spawnHeart, i * 180);
+    }
+    setTimeout(function () { pet.classList.remove('flush'); }, 2200);
+  }
+
+  function onLongPress() {
+    pet.classList.add('angry');
+    say(longs[Math.floor(Math.random() * longs.length)]);
+    if (angryTimer) clearTimeout(angryTimer);
+    angryTimer = setTimeout(function () {
+      pet.classList.remove('angry');
+    }, 2500);
+  }
+
+  window.petEngine = {
+    onTap: onTap,
+    onDoubleTap: onDoubleTap,
+    onLongPress: onLongPress
+  };
+})();
+</script>
+</body>
+</html>
