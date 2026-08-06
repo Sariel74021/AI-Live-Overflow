@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PixelFormat
+import android.os.BatteryManager
 import android.os.Build
 import android.os.FileObserver
 import android.os.Handler
@@ -22,6 +23,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import java.util.Random
 
 class OverlayService : Service() {
@@ -75,6 +77,12 @@ class OverlayService : Service() {
             setInitialScale(100)
             settings.allowFileAccess = true
             settings.javaScriptEnabled = true
+        }
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                // 页面加载完成后主动检查充电状态（服务启动时已在充电则收不到广播）
+                checkChargingOnStart()
+            }
         }
         webView.loadUrl("file:///android_asset/pet.html")
 
@@ -185,6 +193,26 @@ class OverlayService : Service() {
         lastInteractTime = System.currentTimeMillis()
         lonelyLevel = 0
         checkClipboardOnce()
+    }
+
+    /**
+     * 服务启动时主动检测充电状态：
+     * 若服务启动时手机已在充电，ACTION_POWER_CONNECTED 广播不会再触发，
+     * 需手动拉高热度点亮红屏。
+     */
+    private fun checkChargingOnStart() {
+        try {
+            val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+            val status = registerReceiver(null, filter)
+                ?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+            val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL
+            if (isCharging) {
+                interact(8)
+                evaluateJs("window.petEngine && window.petEngine.setHeat && window.petEngine.setHeat($heat) && window.petEngine.say && window.petEngine.say('充电中，我陪你')")
+            }
+        } catch (_: Exception) {
+        }
     }
 
     private fun registerBatteryReceiver() {
