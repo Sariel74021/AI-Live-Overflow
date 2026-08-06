@@ -83,6 +83,9 @@ class OverlayService : Service() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 // 页面加载完成后主动检查充电状态（服务启动时已在充电则收不到广播）
                 Log.d("DeskPet", "onPageFinished: $url")
+                webView.evaluateJavascript("'petEngine=' + (typeof window.petEngine) + ' heatInit=' + (window.__heatDebug ? 'yes' : 'no')") { r ->
+                    Log.d("DeskPet", "probe: $r")
+                }
                 checkChargingOnStart()
             }
         }
@@ -213,7 +216,13 @@ class OverlayService : Service() {
             if (isCharging) {
                 interact(8)
                 Log.d("DeskPet", "checkChargingOnStart: charging, heat now $heat")
-                evaluateJs("window.petEngine && window.petEngine.setHeat && window.petEngine.setHeat($heat) && window.petEngine.say && window.petEngine.say('充电中，我陪你')")
+                val js = "window.petEngine && window.petEngine.setHeat && window.petEngine.setHeat($heat) && window.petEngine.say && window.petEngine.say('充电中，我陪你')"
+                webView.evaluateJavascript(js) { r -> Log.d("DeskPet", "evalResult: $r") }
+                handler.postDelayed({
+                    webView.evaluateJavascript("JSON.stringify(window.__heatDebug || {missing:true})") { r ->
+                        Log.d("DeskPet", "heatDebug: $r")
+                    }
+                }, 1500)
                 Log.d("DeskPet", "checkChargingOnStart: evaluateJs sent")
             }
         } catch (e: Exception) {

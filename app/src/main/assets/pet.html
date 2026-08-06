@@ -486,7 +486,10 @@
 
   /* ---- Heat 热度叠加 ---- */
   var heatTimer = null;
+  window.__heatDebug = { boot: Date.now() };
   function setHeat(v) {
+    window.__heatDebug.setHeatCalled = true;
+    window.__heatDebug.heatVal = v;
     heat = Math.max(0, Math.min(100, v));
     updateHeatOverlay();
     if (heatTimer) { clearInterval(heatTimer); heatTimer = null; }
@@ -506,6 +509,12 @@
   }
   function updateHeatOverlay() {
     heatOverlay.style.opacity = heat > 80 ? '1' : (heat > 60 ? '0.55' : '0');
+    window.__heatDebug.opacitySet = heatOverlay.style.opacity;
+    window.__heatDebug.heatNow = heat;
+    var cs = getComputedStyle(heatOverlay);
+    window.__heatDebug.computedOpacity = cs.opacity;
+    window.__heatDebug.maskImage = cs.webkitMaskImage || cs.maskImage || cs['-webkit-mask-image'] || 'none';
+    window.__heatDebug.overlayFound = !!heatOverlay;
   }
 
   /* ---- 触发词三级响应 ---- */
