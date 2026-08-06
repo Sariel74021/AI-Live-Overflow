@@ -44,7 +44,6 @@ class OverlayService : Service() {
     private var touchSlop = 0
     private var clickRunnable: Runnable? = null
 
-    private var heat = 60
     private var lastInteractTime = System.currentTimeMillis()
     private var lonelyLevel = 0
 
@@ -157,15 +156,15 @@ class OverlayService : Service() {
                     }
                     if (now - lastTapTime < 300) {
                         lastTapTime = 0
-                        interact(15)
+                        interact()
                         evaluateJs("window.petEngine && window.petEngine.onDoubleTap && window.petEngine.onDoubleTap()")
                     } else if (elapsed >= 600) {
-                        interact(10)
+                        interact()
                         evaluateJs("window.petEngine && window.petEngine.onLongPress && window.petEngine.onLongPress()")
                     } else {
                         lastTapTime = now
                         clickRunnable = Runnable {
-                            interact(5)
+                            interact()
                             if (now - tapWindowStart > 2000) {
                                 tapWindowStart = now
                                 tapCount = 0
@@ -190,8 +189,7 @@ class OverlayService : Service() {
         return false
     }
 
-    private fun interact(heatGain: Int = 5) {
-        heat = Math.min(100, heat + heatGain)
+    private fun interact() {
         lastInteractTime = System.currentTimeMillis()
         lonelyLevel = 0
         checkClipboardOnce()
@@ -200,20 +198,19 @@ class OverlayService : Service() {
     /**
      * 服务启动时主动检测充电状态：
      * 若服务启动时手机已在充电，ACTION_POWER_CONNECTED 广播不会再触发，
-     * 需手动拉高热度点亮红屏。
+     * 此时直接触发气泡。
      */
     private fun checkChargingOnStart() {
         try {
             val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
             val status = registerReceiver(null, filter)
                 ?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-            Log.d("DeskPet", "checkChargingOnStart: status=$status heat=$heat")
+                Log.d("DeskPet", "checkChargingOnStart: status=$status")
             val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                 status == BatteryManager.BATTERY_STATUS_FULL
             if (isCharging) {
-                interact(8)
-                Log.d("DeskPet", "checkChargingOnStart: charging, heat now $heat")
-                val js = "window.petEngine && window.petEngine.setHeat && window.petEngine.setHeat($heat) && window.petEngine.say && window.petEngine.say('充电中，我陪你')"
+                Log.d("DeskPet", "checkChargingOnStart: charging, say bubble")
+                val js = "window.petEngine && window.petEngine.say && window.petEngine.say('充电中，我陪你')"
                 webView.evaluateJavascript(js) { r -> Log.d("DeskPet", "evalResult: $r") }
                 Log.d("DeskPet", "checkChargingOnStart: evaluateJs sent")
             }
@@ -234,15 +231,14 @@ class OverlayService : Service() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     when (intent?.action) {
                         Intent.ACTION_POWER_CONNECTED -> {
-                            interact(8)
-                            evaluateJs("window.petEngine && window.petEngine.setHeat && window.petEngine.setHeat($heat) && window.petEngine.say && window.petEngine.say('充电中，我陪你')")
+                            evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('充电中，我陪你')")
                         }
                         Intent.ACTION_POWER_DISCONNECTED -> {
-                            interact(4)
+                            interact()
                             evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('拔了充电器，省着点电')")
                         }
                         Intent.ACTION_BATTERY_LOW -> {
-                            interact(3)
+                            interact()
                             evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('电量告急了，快去充电')")
                         }
                         Intent.ACTION_BATTERY_OKAY -> {
@@ -298,7 +294,7 @@ class OverlayService : Service() {
                 override fun onEvent(event: Int, path: String?) {
                     if (path != null) {
                         handler.post {
-                            interact(8)
+                            interact()
                             val msgs = arrayOf(
                                 "偷偷截图被我抓到了",
                                 "截图做什么，存我的照片？",
@@ -369,7 +365,7 @@ class OverlayService : Service() {
         for ((key, msgs) in map) {
             if (pkg.contains(key)) {
                 lastAppReaction = now
-                interact(3)
+                interact()
                 evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
                 return
             }
@@ -382,7 +378,6 @@ class OverlayService : Service() {
     }
 
     private fun onIdleTick() {
-        heat = Math.max(10, heat - 1)
         val idleMin = (System.currentTimeMillis() - lastInteractTime) / 60000
         var newLevel = 0
         if (idleMin >= 60) newLevel = 3
