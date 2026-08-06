@@ -450,12 +450,13 @@
   /* ---- 爱心特效 ---- */
   function spawnHearts(n) {
     n = n || 1;
+    var rect = pet.getBoundingClientRect();
     for (var i = 0; i < n; i++) {
       var h = document.createElement('div');
       h.className = 'heart';
       h.textContent = '💗';
-      h.style.left = (20 + Math.random() * 60) + '%';
-      h.style.top = (35 + Math.random() * 15) + '%';
+      h.style.left = (rect.left + rect.width * (0.2 + Math.random() * 0.6)) + 'px';
+      h.style.top = (rect.top + rect.height * (0.25 + Math.random() * 0.45)) + 'px';
       h.style.animationDelay = (Math.random() * 0.3) + 's';
       hearts.appendChild(h);
       (function (el) {
