@@ -516,6 +516,11 @@
     window.__heatDebug.maskImage = cs.webkitMaskImage || cs.maskImage || cs['-webkit-mask-image'] || 'none';
     window.__heatDebug.overlayFound = !!heatOverlay;
     window.__heatDebug.el = { display: cs.display, visibility: cs.visibility, w: heatOverlay.offsetWidth, h: heatOverlay.offsetHeight, parentDisplay: getComputedStyle(heatOverlay.parentElement).display, z: cs.zIndex };
+    window.__heatDebug.transition = cs.transitionProperty + ' ' + cs.transitionDuration + ' ' + cs.transitionDelay;
+    window.__heatDebug.cssText = heatOverlay.style.cssText;
+    window.__heatDebug.animations = (heatOverlay.getAnimations ? heatOverlay.getAnimations().map(function (a) { return (a.animationName || a.transitionProperty || '?') + ':' + a.playState + ':' + (a.currentTime || 0); }) : 'noAPI');
+    requestAnimationFrame(function () { window.__heatDebug.nextFrameOpacity = getComputedStyle(heatOverlay).opacity; });
+    setTimeout(function () { window.__heatDebug.lateOpacity = getComputedStyle(heatOverlay).opacity; }, 700);
     // 对照实验：临时去掉mask后computed opacity是否恢复
     var om = heatOverlay.style.webkitMaskImage || heatOverlay.style.maskImage;
     heatOverlay.style.webkitMaskImage = 'none';
