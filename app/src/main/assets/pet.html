@@ -22,17 +22,17 @@
     justify-content: center;
   }
   #pet {
-    width: 88%;
-    height: 92%;
+    width: 90%;
+    height: 94%;
     transform-origin: 50% 100%;
     animation: float 3.2s ease-in-out infinite;
   }
   #pet.jump { animation: jump 0.55s ease-out; }
   #pet.angry .ear-l { animation: earAngryL 0.8s ease-out forwards; }
   #pet.angry .ear-r { animation: earAngryR 0.8s ease-out forwards; }
-  #pet.angry #mouth { d: path("M92,150 Q100,142 108,150"); }
-  #pet.angry #browL { transform: rotate(12deg); transform-origin: 82px 128px; }
-  #pet.angry #browR { transform: rotate(-12deg); transform-origin: 118px 128px; }
+  #pet.angry #mouth { d: path("M92,146 Q100,138 108,146"); }
+  #pet.angry #browL { opacity: 1; transform: rotate(14deg); }
+  #pet.angry #browR { opacity: 1; transform: rotate(-14deg); }
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -61,47 +61,52 @@
   }
   @keyframes earAngryL {
     0% { transform: rotate(0); }
-    100% { transform: rotate(-18deg); }
+    100% { transform: rotate(-16deg); }
   }
   @keyframes earAngryR {
     0% { transform: rotate(0); }
-    100% { transform: rotate(18deg); }
+    100% { transform: rotate(16deg); }
   }
   @keyframes heartFloat {
     0% { transform: translateY(0) scale(0.4); opacity: 0; }
     20% { opacity: 1; }
-    100% { transform: translateY(-70px) scale(1.1); opacity: 0; }
+    100% { transform: translateY(-80px) scale(1.15); opacity: 0; }
   }
-  #tail { transform-origin: 118px 168px; animation: tailWag 1.6s ease-in-out infinite; }
+  #tail { transform-origin: 132px 182px; animation: tailWag 1.6s ease-in-out infinite; }
   .eye { transform-origin: center; animation: blink 4.2s infinite; }
-  .ear-l { transform-origin: 70px 108px; animation: earTwitch 5.5s ease-in-out infinite; }
-  .ear-r { transform-origin: 130px 108px; animation: earTwitch 6.3s ease-in-out infinite; }
-  #blush { opacity: 0; transition: opacity 0.3s; }
-  #pet.flush #blush { opacity: 0.85; }
-  #browL, #browR { transition: transform 0.3s; }
+  .ear-l { transform-origin: 74px 68px; animation: earTwitch 5.5s ease-in-out infinite; }
+  .ear-r { transform-origin: 126px 68px; animation: earTwitch 6.3s ease-in-out infinite; }
+  #browL, #browR { opacity: 0; transition: transform 0.3s, opacity 0.3s; }
+  #browL { transform-origin: 79px 104px; }
+  #browR { transform-origin: 121px 104px; }
+  #blush { opacity: 0.45; transition: opacity 0.3s; }
+  #pet.flush #blush { opacity: 0.95; }
 
   #bubble {
     position: absolute;
-    left: 50%; top: 4%;
+    left: 50%; top: 2%;
     transform: translateX(-50%);
-    max-width: 92%;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1.5px solid #d8d3e8;
-    border-radius: 12px;
-    padding: 6px 10px;
-    font-size: 13px;
+    max-width: 96%;
+    background: rgba(255, 255, 255, 0.96);
+    border: 2px solid #d8d3e8;
+    border-radius: 16px;
+    padding: 10px 14px;
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
     color: #3a3450;
-    white-space: nowrap;
+    white-space: normal;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.25s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
   }
   #bubble.show { opacity: 1; }
   #hearts { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
   .heart {
     position: absolute;
-    font-size: 16px;
+    font-size: 24px;
     animation: heartFloat 1.4s ease-out forwards;
   }
 </style>
@@ -112,94 +117,81 @@
   <svg id="pet" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <radialGradient id="faceGrad" cx="50%" cy="40%" r="60%">
-        <stop offset="0%" stop-color="#FFF3EA"/>
-        <stop offset="100%" stop-color="#FFE3D0"/>
+        <stop offset="0%" stop-color="#FFFFFF"/>
+        <stop offset="100%" stop-color="#FDF1EB"/>
       </radialGradient>
-      <linearGradient id="shirtGrad" x1="0" y1="0" x2="0" y2="1">
+      <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#FFFFFF"/>
-        <stop offset="100%" stop-color="#EDEAF5"/>
-      </linearGradient>
-      <linearGradient id="hairGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#FFFFFF"/>
-        <stop offset="100%" stop-color="#E8E6F2"/>
+        <stop offset="100%" stop-color="#F7F2FA"/>
       </linearGradient>
     </defs>
 
-    <!-- 尾巴 -->
+    <!-- 大尾巴 -->
     <g id="tail">
-      <path d="M128,180 Q166,158 160,120 Q154,106 140,110 Q128,114 128,132 Q128,160 118,182 Z"
-            fill="#FFFFFF" stroke="#E4E1F0" stroke-width="1.5"/>
-      <path d="M150,128 Q154,118 142,116" fill="none" stroke="#E4E1F0" stroke-width="2" stroke-linecap="round"/>
+      <path d="M130,185 Q178,180 180,128 Q180,100 156,96 Q142,93 138,112 Q132,140 126,160 Q122,175 126,185 Z"
+            fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.6"/>
+      <path d="M152,116 Q146,138 138,158" fill="none" stroke="#EAE4F2" stroke-width="2.4" stroke-linecap="round"/>
     </g>
 
-    <!-- 身体：白衬衫 -->
-    <path d="M62,186 Q58,142 80,128 L120,128 Q142,142 138,186 Z"
-          fill="url(#shirtGrad)" stroke="#D9D4E8" stroke-width="1.5"/>
-    <!-- 衬衫领 -->
-    <path d="M88,130 L100,146 L112,130 L108,124 L100,130 L92,124 Z"
-          fill="#FFFFFF" stroke="#D9D4E8" stroke-width="1.2"/>
-    <line x1="100" y1="146" x2="100" y2="158" stroke="#C9C3DC" stroke-width="1.5"/>
-    <!-- 纽扣 -->
-    <circle cx="100" cy="150" r="2" fill="#C9C3DC"/>
-    <circle cx="100" cy="160" r="2" fill="#C9C3DC"/>
-    <!-- 手臂 -->
-    <path d="M66,140 Q52,152 56,170 Q58,178 66,174 Q72,170 72,158 Z"
-          fill="url(#shirtGrad)" stroke="#D9D4E8" stroke-width="1.2"/>
-    <path d="M134,140 Q148,152 144,170 Q142,178 134,174 Q128,170 128,158 Z"
-          fill="url(#shirtGrad)" stroke="#D9D4E8" stroke-width="1.2"/>
-
-    <!-- 头 -->
-    <ellipse cx="100" cy="112" rx="42" ry="38" fill="url(#faceGrad)"/>
-
-    <!-- 狐耳（右） -->
-    <g class="ear-r">
-      <path d="M116,80 Q130,44 148,54 Q152,58 146,72 Q140,84 126,88 Z"
-            fill="url(#hairGrad)" stroke="#E4E1F0" stroke-width="1.5"/>
-      <path d="M124,80 Q132,58 142,60 Q146,62 141,72 Q137,80 128,84 Z"
-            fill="#F6C0CE"/>
-    </g>
     <!-- 狐耳（左） -->
     <g class="ear-l">
-      <path d="M84,80 Q70,44 52,54 Q48,58 54,72 Q60,84 74,88 Z"
-            fill="url(#hairGrad)" stroke="#E4E1F0" stroke-width="1.5"/>
-      <path d="M76,80 Q68,58 58,60 Q54,62 59,72 Q63,80 72,84 Z"
+      <path d="M82,70 Q62,26 42,40 Q34,48 44,62 Q54,74 66,80 Z"
+            fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.6"/>
+      <path d="M74,66 Q60,40 50,48 Q46,52 53,62 Q60,70 68,74 Z"
+            fill="#F6C0CE"/>
+    </g>
+    <!-- 狐耳（右） -->
+    <g class="ear-r">
+      <path d="M118,70 Q138,26 158,40 Q166,48 156,62 Q146,74 134,80 Z"
+            fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.6"/>
+      <path d="M126,66 Q140,40 150,48 Q154,52 147,62 Q140,70 132,74 Z"
             fill="#F6C0CE"/>
     </g>
 
-    <!-- 白发 -->
-    <path d="M58,112 Q54,74 76,60 Q88,52 100,54 Q112,52 124,60 Q146,74 142,112
-             L138,118 Q132,92 124,84 Q118,96 116,112 L116,120 Q116,140 100,146
-             Q84,140 84,120 L84,112 Q82,96 76,84 Q68,92 62,118 Z"
-          fill="url(#hairGrad)"/>
-    <!-- 发尾长刘海 -->
-    <path d="M58,112 Q52,120 56,136 Q60,142 64,132 Q66,122 62,114 Z" fill="url(#hairGrad)"/>
-    <path d="M142,112 Q148,120 144,136 Q140,142 136,132 Q134,122 138,114 Z" fill="url(#hairGrad)"/>
+    <!-- 身体（坐姿） -->
+    <path d="M62,152 Q56,190 68,204 Q82,214 100,214 Q118,214 132,204 Q144,190 138,152 Z"
+          fill="url(#bodyGrad)" stroke="#EAE4F2" stroke-width="1.6"/>
+    <!-- 肚皮 -->
+    <ellipse cx="100" cy="190" rx="26" ry="20" fill="#FFF9F5"/>
+    <!-- 前爪 -->
+    <ellipse cx="79" cy="207" rx="11" ry="9" fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.3"/>
+    <ellipse cx="121" cy="207" rx="11" ry="9" fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.3"/>
+    <path d="M75,210 L75,204 M79,211 L79,205 M83,210 L83,204" stroke="#E3DCF0" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M117,210 L117,204 M121,211 L121,205 M125,210 L125,204" stroke="#E3DCF0" stroke-width="1.2" stroke-linecap="round"/>
 
-    <!-- 眉毛 -->
-    <line id="browL" x1="74" y1="126" x2="92" y2="124" stroke="#C9B8A8" stroke-width="2.5" stroke-linecap="round"/>
-    <line id="browR" x1="108" y1="124" x2="126" y2="126" stroke="#C9B8A8" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- 头 -->
+    <ellipse cx="100" cy="110" rx="46" ry="42" fill="url(#faceGrad)"/>
+    <!-- 头顶毛撮 -->
+    <path d="M88,72 Q94,58 100,64 Q106,58 112,72 Q106,66 100,68 Q94,66 88,72 Z"
+          fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.2"/>
+
+    <!-- 眉毛（生气时显示） -->
+    <line id="browL" x1="70" y1="106" x2="88" y2="103" stroke="#C9A98F" stroke-width="2.6" stroke-linecap="round"/>
+    <line id="browR" x1="112" y1="103" x2="130" y2="106" stroke="#C9A98F" stroke-width="2.6" stroke-linecap="round"/>
 
     <!-- 眼睛 -->
     <g class="eye">
-      <ellipse cx="83" cy="136" rx="5.5" ry="6.5" fill="#C8892F"/>
-      <ellipse cx="83" cy="134" rx="2" ry="2.2" fill="#FFFFFF"/>
-      <ellipse cx="83" cy="139" rx="1.6" ry="1.8" fill="#7A4E14"/>
+      <ellipse cx="83" cy="118" rx="6.5" ry="8" fill="#D99A3D"/>
+      <ellipse cx="83" cy="115" rx="2.4" ry="2.8" fill="#FFFFFF"/>
+      <ellipse cx="83" cy="122" rx="1.8" ry="2" fill="#7A4E14"/>
     </g>
     <g class="eye">
-      <ellipse cx="117" cy="136" rx="5.5" ry="6.5" fill="#C8892F"/>
-      <ellipse cx="117" cy="134" rx="2" ry="2.2" fill="#FFFFFF"/>
-      <ellipse cx="117" cy="139" rx="1.6" ry="1.8" fill="#7A4E14"/>
+      <ellipse cx="117" cy="118" rx="6.5" ry="8" fill="#D99A3D"/>
+      <ellipse cx="117" cy="115" rx="2.4" ry="2.8" fill="#FFFFFF"/>
+      <ellipse cx="117" cy="122" rx="1.8" ry="2" fill="#7A4E14"/>
     </g>
 
-    <!-- 腮红 -->
+    <!-- 腮红（眼下外侧） -->
     <g id="blush">
-      <ellipse cx="70" cy="148" rx="9" ry="5" fill="#F8A8B8" opacity="0.7"/>
-      <ellipse cx="130" cy="148" rx="9" ry="5" fill="#F8A8B8" opacity="0.7"/>
+      <ellipse cx="70" cy="134" rx="9.5" ry="5.5" fill="#F8A8B8"/>
+      <ellipse cx="130" cy="134" rx="9.5" ry="5.5" fill="#F8A8B8"/>
     </g>
 
+    <!-- 鼻子 -->
+    <ellipse cx="100" cy="135" rx="3.6" ry="2.9" fill="#E88A9A"/>
     <!-- 嘴 -->
-    <path id="mouth" d="M92,152 Q100,158 108,152" fill="none" stroke="#C8892F"
-          stroke-width="2.2" stroke-linecap="round"/>
+    <path id="mouth" d="M91,144 Q95,149 100,144 Q105,149 109,144" fill="none" stroke="#B97A4A"
+          stroke-width="2.4" stroke-linecap="round"/>
   </svg>
   <div id="hearts"></div>
 </div>
@@ -213,22 +205,21 @@
   var angryTimer = null;
 
   var taps = [
-    '嗯？我在。',
-    '戳我干嘛。',
-    '……有事说事。',
-    '别闹，我看着你呢。'
+    '嗯？',
+    '有事？',
+    '戳我干嘛',
+    '别闹'
   ];
   var doubles = [
-    '……耳朵只有你能碰。',
-    '……你倒是会挑地方戳。',
-    '……再戳，我可就记下了。',
-    '……'
+    '耳朵只有你能碰',
+    '……记下了',
+    '你倒是会挑地方戳'
   ];
   var longs = [
-    '……疼。',
-    '属狗的吗你。',
-    '……我记仇了。',
-    '再按，我可要还手了。'
+    '属狗的吗',
+    '……疼',
+    '我记仇了',
+    '再按还手了'
   ];
 
   function say(text) {
@@ -237,7 +228,7 @@
     if (bubbleTimer) clearTimeout(bubbleTimer);
     bubbleTimer = setTimeout(function () {
       bubble.classList.remove('show');
-    }, 1600);
+    }, 1700);
   }
 
   function spawnHeart() {
@@ -245,7 +236,7 @@
     h.className = 'heart';
     h.textContent = '♥';
     h.style.left = (30 + Math.random() * 40) + '%';
-    h.style.top = (35 + Math.random() * 15) + '%';
+    h.style.top = (30 + Math.random() * 15) + '%';
     h.style.color = ['#F48FB1', '#F06292', '#FF8A80'][Math.floor(Math.random() * 3)];
     hearts.appendChild(h);
     setTimeout(function () { h.remove(); }, 1500);
