@@ -222,7 +222,7 @@ class OverlayService : Service() {
                     webView.evaluateJavascript("JSON.stringify(window.__heatDebug || {missing:true})") { r ->
                         Log.d("DeskPet", "heatDebug: $r")
                     }
-                }, 4000)
+                }, 13000)
                 Log.d("DeskPet", "checkChargingOnStart: evaluateJs sent")
             }
         } catch (e: Exception) {

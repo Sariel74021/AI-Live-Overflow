@@ -489,7 +489,20 @@
   window.__heatDebug = { boot: Date.now() };
   function setHeat(v) {
     window.__heatDebug.setHeatCalled = true;
+    window.__heatDebug.setHeatCount = (window.__heatDebug.setHeatCount || 0) + 1;
     window.__heatDebug.heatVal = v;
+    // v21: 实时时间线 - 每500ms记录一次computed opacity, 共24个点(12秒)
+    if (window.__heatDebug._tlTimer) { clearInterval(window.__heatDebug._tlTimer); }
+    window.__heatDebug.opacityTimeline = [];
+    var _tlStart = Date.now();
+    window.__heatDebug._tlTimer = setInterval(function () {
+      window.__heatDebug.opacityTimeline.push(Math.round(getComputedStyle(heatOverlay).opacity * 100) / 100);
+      if (window.__heatDebug.opacityTimeline.length >= 24) {
+        clearInterval(window.__heatDebug._tlTimer);
+        window.__heatDebug._tlTimer = null;
+        window.__heatDebug.timelineEnded = true;
+      }
+    }, 500);
     heat = Math.max(0, Math.min(100, v));
     updateHeatOverlay();
     if (heatTimer) { clearInterval(heatTimer); heatTimer = null; }
