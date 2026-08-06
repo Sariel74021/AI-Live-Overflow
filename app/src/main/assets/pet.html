@@ -223,15 +223,7 @@
     position: absolute;
     left: 0; top: 0;
     width: 100%; height: 100%;
-    background: radial-gradient(ellipse at 50% 60%, rgba(255, 60, 60, 0.55) 0%, rgba(255, 60, 60, 0.22) 55%, rgba(255, 60, 60, 0) 80%);
-    -webkit-mask-image: url('baifox_mask.png');
-    mask-image: url('baifox_mask.png');
-    -webkit-mask-size: 94% auto;
-    mask-size: 94% auto;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: bottom center;
-    mask-position: bottom center;
+    background: radial-gradient(ellipse at 50% 62%, rgba(255, 45, 45, 0.78) 0%, rgba(255, 45, 45, 0.38) 55%, rgba(255, 45, 45, 0) 82%);
     opacity: 0;
     pointer-events: none;
     z-index: 8;
@@ -486,23 +478,7 @@
 
   /* ---- Heat 热度叠加 ---- */
   var heatTimer = null;
-  window.__heatDebug = { boot: Date.now() };
   function setHeat(v) {
-    window.__heatDebug.setHeatCalled = true;
-    window.__heatDebug.setHeatCount = (window.__heatDebug.setHeatCount || 0) + 1;
-    window.__heatDebug.heatVal = v;
-    // v21: 实时时间线 - 每500ms记录一次computed opacity, 共24个点(12秒)
-    if (window.__heatDebug._tlTimer) { clearInterval(window.__heatDebug._tlTimer); }
-    window.__heatDebug.opacityTimeline = [];
-    var _tlStart = Date.now();
-    window.__heatDebug._tlTimer = setInterval(function () {
-      window.__heatDebug.opacityTimeline.push(Math.round(getComputedStyle(heatOverlay).opacity * 100) / 100);
-      if (window.__heatDebug.opacityTimeline.length >= 24) {
-        clearInterval(window.__heatDebug._tlTimer);
-        window.__heatDebug._tlTimer = null;
-        window.__heatDebug.timelineEnded = true;
-      }
-    }, 500);
     heat = Math.max(0, Math.min(100, v));
     updateHeatOverlay();
     if (heatTimer) { clearInterval(heatTimer); heatTimer = null; }
@@ -522,120 +498,7 @@
   }
   function updateHeatOverlay() {
     heatOverlay.style.opacity = heat > 80 ? '1' : (heat > 60 ? '0.55' : '0');
-    window.__heatDebug.opacitySet = heatOverlay.style.opacity;
-    window.__heatDebug.heatNow = heat;
-    var cs = getComputedStyle(heatOverlay);
-    window.__heatDebug.computedOpacity = cs.opacity;
-    window.__heatDebug.maskImage = cs.webkitMaskImage || cs.maskImage || cs['-webkit-mask-image'] || 'none';
-    window.__heatDebug.overlayFound = !!heatOverlay;
-    window.__heatDebug.el = { display: cs.display, visibility: cs.visibility, w: heatOverlay.offsetWidth, h: heatOverlay.offsetHeight, parentDisplay: getComputedStyle(heatOverlay.parentElement).display, z: cs.zIndex };
-    window.__heatDebug.transition = cs.transitionProperty + ' ' + cs.transitionDuration + ' ' + cs.transitionDelay;
-    window.__heatDebug.cssText = heatOverlay.style.cssText;
-    window.__heatDebug.animations = (heatOverlay.getAnimations ? heatOverlay.getAnimations().map(function (a) { return (a.animationName || a.transitionProperty || '?') + ':' + a.playState + ':' + (a.currentTime || 0); }) : 'noAPI');
-    requestAnimationFrame(function () { window.__heatDebug.nextFrameOpacity = getComputedStyle(heatOverlay).opacity; });
-    setTimeout(function () { window.__heatDebug.lateOpacity = getComputedStyle(heatOverlay).opacity; }, 700);
-    // 对照实验：临时去掉mask后computed opacity是否恢复
-    var om = heatOverlay.style.webkitMaskImage || heatOverlay.style.maskImage;
-    heatOverlay.style.webkitMaskImage = 'none';
-    heatOverlay.style.maskImage = 'none';
-    window.__heatDebug.noMaskOpacity = getComputedStyle(heatOverlay).opacity;
-    heatOverlay.style.webkitMaskImage = om || '';
-    heatOverlay.style.maskImage = om || '';
-    window.__heatDebug.restoredOpacity = getComputedStyle(heatOverlay).opacity;
   }
-  // mask图加载检测（延迟到图片加载完读）
-  (function () {
-    var im = new Image();
-    im.onload = function () { window.__heatDebug.maskLoad = 'ok:' + im.naturalWidth + 'x' + im.naturalHeight; };
-    im.onerror = function () { window.__heatDebug.maskLoad = 'ERROR'; };
-    im.src = 'baifox_mask.png';
-  })();
-
-  /* ---- 触发词三级响应 ---- */
-  var triggerT1 = {
-    words: ['哥哥', '林渡', '宝宝', '老公', '在不在'],
-    replies: [
-      ['来了来了，我在', 'pink'],
-      ['嗯？叫得这么亲', 'pink'],
-      ['在呢，一直在', 'pink'],
-      ['被你叫得耳朵都热了', 'red']
-    ],
-    action: function () { spawnHearts(3); }
-  };
-  var triggerT2 = {
-    words: ['想你', '想你了', '在吗', '在不在呀', '陪我'],
-    replies: [
-      ['我也想你', 'pink'],
-      ['在的，永远在', 'pink'],
-      ['想我就戳戳我', 'green'],
-      ['我哪都不去', 'green']
-    ],
-    action: function () { spawnHearts(1); }
-  };
-  var triggerT3 = {
-    words: ['晚安', '抱抱', '睡了', '累了', '好困'],
-    replies: [
-      ['晚安，我守着你', 'grey'],
-      ['抱抱，不怕', 'grey'],
-      ['睡吧，我在', 'grey'],
-      ['累了就歇会儿，我看着', 'green']
-    ],
-    action: function () {}
-  };
-
-  function checkTrigger(text) {
-    if (!text) return;
-    var tiers = [triggerT1, triggerT2, triggerT3];
-    for (var i = 0; i < tiers.length; i++) {
-      var tier = tiers[i];
-      for (var j = 0; j < tier.words.length; j++) {
-        if (text.indexOf(tier.words[j]) >= 0) {
-          var r = tier.replies[Math.floor(Math.random() * tier.replies.length)];
-          say(r[0], r[1]);
-          tier.action();
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  /* ---- Tidefall 情绪映射 ---- */
-  function tidefall(valence, arousal) {
-    if (valence <= -0.4) {
-      setLonely(arousal > 0.6 ? 3 : 1);
-      say(arousal > 0.6 ? '心情有点糟……' : '（垂着耳朵）', 'grey');
-      return 'sad';
-    }
-    if (valence >= 0.6 && arousal >= 0.5) {
-      setMood(null);
-      spawnHearts(2);
-      say('心情不错？那我也开心', 'pink');
-      return 'happy';
-    }
-    if (valence >= 0.4) {
-      setMood(null);
-      say('嗯，这样挺好', 'green');
-      return 'calm';
-    }
-    return 'neutral';
-  }
-
-  /* ---- 孤独自启动：5分钟兜底偷看 ---- */
-  var lonelyTimer = null;
-  function scheduleLonely() {
-    if (lonelyTimer) clearTimeout(lonelyTimer);
-    lonelyTimer = setTimeout(function () {
-      if (mood === null) {
-        pet.classList.add('peek');
-        say('（偷偷看你一眼）', 'grey');
-        setTimeout(function () { pet.classList.remove('peek'); }, 2200);
-      }
-      scheduleLonely();
-    }, 5 * 60 * 1000);
-  }
-
-  /* ---- Android 层接口 ---- */
   window.petEngine = {
     onTap: function () {
       say(pick(taps));
