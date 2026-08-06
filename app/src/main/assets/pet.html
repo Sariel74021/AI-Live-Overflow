@@ -465,7 +465,7 @@
       b.style.width = size + 'px';
       b.style.height = size + 'px';
       b.style.left = (15 + Math.random() * 70) + '%';
-      b.style.bottom = (20 + Math.random() * 30) + '%';
+      b.style.bottom = (68 + Math.random() * 10) + '%';
       b.style.animationDelay = (Math.random() * 0.4) + 's';
       bubbles.appendChild(b);
       (function (el) {
@@ -475,8 +475,26 @@
   }
 
   /* ---- Heat 热度叠加 ---- */
+  var heatTimer = null;
   function setHeat(v) {
     heat = Math.max(0, Math.min(100, v));
+    updateHeatOverlay();
+    if (heatTimer) { clearInterval(heatTimer); heatTimer = null; }
+    if (heat > 60) {
+      heatTimer = setInterval(function () {
+        heat -= 3;
+        if (heat <= 60) {
+          heat = 60;
+          updateHeatOverlay();
+          clearInterval(heatTimer);
+          heatTimer = null;
+        } else {
+          updateHeatOverlay();
+        }
+      }, 5000);
+    }
+  }
+  function updateHeatOverlay() {
     heatOverlay.style.opacity = heat > 80 ? '1' : (heat > 60 ? '0.55' : '0');
   }
 
