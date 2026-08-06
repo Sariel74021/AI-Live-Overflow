@@ -183,7 +183,8 @@ class OverlayService : Service() {
                             val msgs = arrayOf(
                                 "偷偷截图被我抓到了",
                                 "截图做什么，存我的照片？",
-                                "拍下来了？给我也看看"
+                                "拍下来了？给我也看看",
+                                "存我照片？胆子不小"
                             )
                             evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
                         }
@@ -244,7 +245,7 @@ class OverlayService : Service() {
         }
         if (rand.nextInt(100) < 15) {
             lastAppReaction = now
-            val generic = arrayOf("又在忙什么，理理我", "我就在这看着你")
+            val generic = arrayOf("又在忙什么，理理我", "我就在这看着你", "你忙你的，我看着就行", "别把我晾太久")
             evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${generic[rand.nextInt(generic.size)]}')")
         }
     }
@@ -259,9 +260,18 @@ class OverlayService : Service() {
         if (newLevel > lonelyLevel) {
             lonelyLevel = newLevel
             when (newLevel) {
-                1 -> evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('……还在吗')")
-                2 -> evaluateJs("window.petEngine && window.petEngine.setMood && window.petEngine.setMood('sad') && window.petEngine.say && window.petEngine.say('你都不理我了')")
-                3 -> evaluateJs("window.petEngine && window.petEngine.setMood && window.petEngine.setMood('sleep') && window.petEngine.say && window.petEngine.say('我先睡了，你忙吧')")
+                1 -> {
+                    val msgs = arrayOf("……还在吗", "……喂，你还在吗", "……好安静，说句话吧")
+                    evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
+                }
+                2 -> {
+                    val msgs = arrayOf("你都不理我了", "……我是不是被忘了", "再不理我，我就蹲墙角了")
+                    evaluateJs("window.petEngine && window.petEngine.setMood && window.petEngine.setMood('sad') && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
+                }
+                3 -> {
+                    val msgs = arrayOf("我先睡了，你忙吧", "……困了，等你来叫我", "我假装睡了，你会来戳我吗")
+                    evaluateJs("window.petEngine && window.petEngine.setMood && window.petEngine.setMood('sleep') && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
+                }
             }
         }
         handler.postDelayed(idleTick, 60000)
@@ -269,7 +279,7 @@ class OverlayService : Service() {
 
     private fun onDrinkTick() {
         if (rand.nextInt(100) < 80) {
-            val msgs = arrayOf("该喝水了，别等我催", "喝口水再看手机", "水杯空了，去倒一杯")
+            val msgs = arrayOf("该喝水了，别等我催", "喝口水再看手机", "水杯空了，去倒一杯", "去喝口水，我盯着")
             evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
         }
         handler.postDelayed(drinkTick, 45 * 60 * 1000)
@@ -277,7 +287,7 @@ class OverlayService : Service() {
 
     private fun onBehaviorTick() {
         if (rand.nextInt(100) < 55) {
-            val msgs = arrayOf("哈欠——", "伸了个懒腰", "（尾巴摇了摇）", "有点无聊", "（打了个滚）")
+            val msgs = arrayOf("哈欠——", "伸了个懒腰", "（尾巴摇了摇）", "有点无聊", "（打了个滚）", "（耳朵动了动）", "（偷偷看你）", "（把尾巴卷成心形）")
             evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
         }
         handler.postDelayed(behaviorTick, 20 * 60 * 1000)

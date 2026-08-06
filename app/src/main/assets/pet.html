@@ -71,10 +71,18 @@
     50% { transform: translateY(2px) scale(1, 0.985); }
   }
 
-  #bubble {
+  #chatbox {
     position: absolute;
-    left: 50%; top: 0%;
+    left: 50%; bottom: 73%;
     transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  #bubble {
     max-width: 98%;
     background: rgba(255, 255, 255, 0.97);
     border: 2.5px solid #d8d3e8;
@@ -87,30 +95,22 @@
     color: #3a3450;
     white-space: normal;
     opacity: 0;
-    pointer-events: none;
     transition: opacity 0.22s;
     box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-    z-index: 5;
   }
   #bubble.show { opacity: 1; }
 
   #emoji {
-    position: absolute;
-    left: 50%;
-    top: -2%;
-    transform: translateX(-50%);
     font-size: 40px;
     line-height: 1;
-    pointer-events: none;
-    z-index: 6;
     opacity: 0;
     transition: opacity 0.2s;
   }
   #emoji.show { opacity: 1; }
   #emoji.zzz { animation: zzzFloat 1.8s ease-in-out infinite; }
   @keyframes zzzFloat {
-    0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
-    50% { transform: translateX(-50%) translateY(-10px) scale(1.15); }
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.15); }
   }
 
   #hearts { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 7; }
@@ -128,8 +128,10 @@
 </head>
 <body>
 <div id="stage">
-  <div id="bubble"></div>
-  <div id="emoji"></div>
+  <div id="chatbox">
+    <div id="emoji"></div>
+    <div id="bubble"></div>
+  </div>
   <img id="petImg" src="baifox.png" alt="">
   <div id="hearts"></div>
 </div>
@@ -149,37 +151,62 @@
     '有事？',
     '戳我干嘛',
     '别闹',
-    '摸够了吗'
+    '摸够了吗',
+    '叫我？',
+    '又来看我了',
+    '……手痒？',
+    '嗯，我在',
+    '这都第几下了'
   ];
   var doubles = [
     '这么喜欢我？',
     '……记下了',
     '你倒是会挑地方戳',
-    '心跳被你戳乱了'
+    '心跳被你戳乱了',
+    '两下？想我了就直接说',
+    '……耳朵被你戳热了',
+    '再这样我可要记你一笔',
+    '你就仗着我不会跑',
+    '好吧，陪你一下',
+    '……你自己数数我心跳乱了几下'
   ];
   var longs = [
     '属狗的吗',
     '……疼',
     '我记仇了',
-    '再按还手了'
+    '再按还手了',
+    '……再按就不客气了',
+    '你是想把我按扁吗',
+    '疼也认了，是你',
+    '哼，记你账上'
   ];
   var flings = [
     '甩来甩去，我是皮球吗',
     '轻点！毛要掉了',
     '……你当我在荡秋千？',
-    '扔坏了你负责'
+    '扔坏了你负责',
+    '甩上瘾了是吧',
+    '……头晕，先放我下来',
+    '再甩我就咬你',
+    '骨头要散架了'
   ];
   var combos = [
     '连击！手速不错嘛',
     '戳上瘾了？',
     '再戳我就跟你回家',
-    '这么多下，手不酸吗'
+    '这么多下，手不酸吗',
+    '三连击，挺行啊你',
+    '手不酸？我替你酸',
+    '停一下，让我喘口气',
+    '有本事再来'
   ];
   var comboHi = [
     '疯了疯了',
     '你是戳戳机器人吗',
     '够了！我头晕',
-    '行行行，你赢了'
+    '行行行，你赢了',
+    '我投降，你赢了行吧',
+    '……再戳我就钻进你怀里了'
   ];
 
   function say(text) {
