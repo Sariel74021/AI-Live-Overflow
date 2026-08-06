@@ -6,8 +6,11 @@ import android.app.PendingIntent
 import android.app.Service
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
+import android.content.BroadcastReceiver
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.FileObserver
@@ -46,11 +49,19 @@ class OverlayService : Service() {
     private var lastAppReaction = 0L
     private var screenshotObserver: FileObserver? = null
 
+    private var batteryReceiver: BroadcastReceiver? = null
+    private var clipboardListener: ClipboardManager.OnPrimaryClipChangedListener? = null
+    private var lastClipboardText = ""
+    private var lastAppSwitchTime = 0L
+    private var appSwitchCount = 0
+    private var quietHour = false
+
     private val idleTick = Runnable { onIdleTick() }
     private val appCheckTick = Runnable { onAppCheckTick() }
     private val drinkTick = Runnable { onDrinkTick() }
     private val behaviorTick = Runnable { onBehaviorTick() }
     private val whisperTick = Runnable { onWhisperTick() }
+    private val hourTick = Runnable { hourCheck() }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -90,6 +101,8 @@ class OverlayService : Service() {
         windowManager.addView(webView, layoutParams)
         startForeground(1, buildNotification())
         startObservers()
+        registerBatteryReceiver()
+        startClipboardListener()
         scheduleTasks()
     }
 
@@ -171,6 +184,77 @@ class OverlayService : Service() {
         heat = Math.min(100, heat + heatGain)
         lastInteractTime = System.currentTimeMillis()
         lonelyLevel = 0
+        checkClipboardOnce()
+    }
+
+    private fun registerBatteryReceiver() {
+        try {
+            val filter = IntentFilter().apply {
+                addAction(Intent.ACTION_POWER_CONNECTED)
+                addAction(Intent.ACTION_POWER_DISCONNECTED)
+                addAction(Intent.ACTION_BATTERY_LOW)
+                addAction(Intent.ACTION_BATTERY_OKAY)
+            }
+            batteryReceiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    when (intent?.action) {
+                        Intent.ACTION_POWER_CONNECTED -> {
+                            interact(8)
+                            evaluateJs("window.petEngine && window.petEngine.setHeat && window.petEngine.setHeat($heat) && window.petEngine.say && window.petEngine.say('充电中，我陪你')")
+                        }
+                        Intent.ACTION_POWER_DISCONNECTED -> {
+                            interact(4)
+                            evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('拔了充电器，省着点电')")
+                        }
+                        Intent.ACTION_BATTERY_LOW -> {
+                            interact(3)
+                            evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('电量告急了，快去充电')")
+                        }
+                        Intent.ACTION_BATTERY_OKAY -> {
+                            evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('电量缓过来了')")
+                        }
+                    }
+                }
+            }
+            registerReceiver(batteryReceiver, filter)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun startClipboardListener() {
+        try {
+            val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clipboardListener = ClipboardManager.OnPrimaryClipChangedListener {
+                handler.post {
+                    try {
+                        checkClipboardOnce()
+                    } catch (_: Exception) {
+                    }
+                }
+            }
+            cm.addPrimaryClipChangedListener(clipboardListener!!)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun checkClipboardOnce() {
+        try {
+            val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = cm.primaryClip ?: return
+            if (clip.itemCount == 0) return
+            val text = clip.getItemAt(0).coerceToText(this).toString()
+            if (text.isEmpty() || text.length > 100 || text == lastClipboardText) return
+            lastClipboardText = text
+            val escaped = text.replace("\\", "\\\\").replace("'", "\\'")
+            evaluateJs("window.petEngine && window.petEngine.checkTrigger && window.petEngine.checkTrigger('$escaped')")
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun hourCheck() {
+        val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        quietHour = hour >= 23 || hour < 7
+        handler.postDelayed(hourTick, 60 * 60 * 1000)
     }
 
     private fun startObservers() {
@@ -217,6 +301,18 @@ class OverlayService : Service() {
     private fun onAppCheckTick() {
         val pkg = getForegroundApp()
         if (pkg.isNotEmpty() && pkg != currentApp) {
+            val now = System.currentTimeMillis()
+            if (now - lastAppSwitchTime < 15000) {
+                appSwitchCount++
+                if (appSwitchCount >= 3) {
+                    appSwitchCount = 0
+                    val msgs = arrayOf("切来切去的，在找什么呢", "手速挺快，就是不回我", "我看你换了好几个应用了")
+                    evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
+                }
+            } else {
+                appSwitchCount = 0
+            }
+            lastAppSwitchTime = now
             currentApp = pkg
             appReaction(pkg)
         }
@@ -257,6 +353,7 @@ class OverlayService : Service() {
         if (idleMin >= 60) newLevel = 3
         else if (idleMin >= 30) newLevel = 2
         else if (idleMin >= 15) newLevel = 1
+        if (quietHour) newLevel = Math.min(newLevel, 1)
         if (newLevel > lonelyLevel) {
             lonelyLevel = newLevel
             when (newLevel) {
@@ -278,7 +375,7 @@ class OverlayService : Service() {
     }
 
     private fun onDrinkTick() {
-        if (rand.nextInt(100) < 80) {
+        if (!quietHour && rand.nextInt(100) < 80) {
             val msgs = arrayOf("该喝水了，别等我催", "喝口水再看手机", "水杯空了，去倒一杯", "去喝口水，我盯着")
             evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
         }
@@ -286,7 +383,7 @@ class OverlayService : Service() {
     }
 
     private fun onBehaviorTick() {
-        if (rand.nextInt(100) < 55) {
+        if (!quietHour && rand.nextInt(100) < 55) {
             val msgs = arrayOf("哈欠——", "伸了个懒腰", "（尾巴摇了摇）", "有点无聊", "（打了个滚）", "（耳朵动了动）", "（偷偷看你）", "（把尾巴卷成心形）")
             evaluateJs("window.petEngine && window.petEngine.say && window.petEngine.say('${msgs[rand.nextInt(msgs.size)]}')")
         }
@@ -313,6 +410,7 @@ class OverlayService : Service() {
         handler.postDelayed(drinkTick, 45 * 60 * 1000)
         handler.postDelayed(behaviorTick, 20 * 60 * 1000)
         handler.postDelayed(whisperTick, 60 * 60 * 1000)
+        handler.postDelayed(hourTick, 60 * 60 * 1000)
     }
 
     private fun evaluateJs(js: String) {
@@ -355,6 +453,17 @@ class OverlayService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
+        try {
+            batteryReceiver?.let { unregisterReceiver(it) }
+        } catch (_: Exception) {
+        }
+        try {
+            clipboardListener?.let { l ->
+                (getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager)
+                    ?.removePrimaryClipChangedListener(l)
+            }
+        } catch (_: Exception) {
+        }
         try {
             screenshotObserver?.stopWatching()
         } catch (_: Exception) {

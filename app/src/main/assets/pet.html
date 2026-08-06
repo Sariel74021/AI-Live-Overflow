@@ -7,7 +7,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
     width: 100%; height: 100%;
-    background: transparent;
+    background: #ffffff;
     overflow: hidden;
     -webkit-user-select: none;
     user-select: none;
@@ -28,12 +28,23 @@
     transform-origin: 50% 100%;
     animation: float 3.2s ease-in-out infinite;
     -webkit-user-drag: none;
+    transition: filter 0.6s;
   }
   #petImg.jump  { animation: jump 0.55s ease-out; }
   #petImg.shake { animation: shake 0.55s ease-out; }
   #petImg.combo { animation: combo 0.8s ease-out; }
   #petImg.sad   { animation: sadSway 2.6s ease-in-out infinite; filter: saturate(0.72) brightness(0.97); }
   #petImg.sleep { animation: sleepBob 3.2s ease-in-out infinite; filter: brightness(0.82) saturate(0.55); }
+  #petImg.wake  { animation: wakeAnim 0.9s ease-out; }
+  #petImg.juggle{ animation: juggleAnim 1.2s ease-in-out; }
+  #petImg.nod   { animation: nodAnim 1.6s ease-in-out infinite; }
+  #petImg.carry { animation: carryAnim 1.8s ease-in-out infinite; }
+  #petImg.peek  { animation: peekAnim 2s ease-in-out infinite; }
+  #petImg.bobble{ animation: bobbleAnim 1.4s ease-in-out infinite; }
+  #petImg.lonely1 { animation: peekAnim 2s ease-in-out infinite; }
+  #petImg.lonely2 { animation: bobbleAnim 1.4s ease-in-out infinite; }
+  #petImg.lonely3 { animation: carryAnim 1.8s ease-in-out infinite; }
+  #petImg.lonely4 { animation: nodAnim 1.6s ease-in-out infinite; }
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -70,6 +81,53 @@
     0%, 100% { transform: translateY(4px) scale(1, 1); }
     50% { transform: translateY(2px) scale(1, 0.985); }
   }
+  /* 唤醒：伸懒腰 */
+  @keyframes wakeAnim {
+    0% { transform: translateY(2px) scale(1, 0.96); }
+    30% { transform: translateY(-16px) scale(1.06, 1.1); }
+    55% { transform: translateY(-20px) scale(1.02, 1.14); }
+    75% { transform: translateY(-8px) scale(1.05, 1.04); }
+    100% { transform: translateY(0) scale(1, 1); }
+  }
+  /* 杂耍：快速小跳+轻旋 */
+  @keyframes juggleAnim {
+    0% { transform: translateY(0) rotate(0); }
+    10% { transform: translateY(-14px) rotate(-6deg); }
+    20% { transform: translateY(-6px) rotate(5deg); }
+    30% { transform: translateY(-16px) rotate(-5deg); }
+    40% { transform: translateY(-4px) rotate(4deg); }
+    50% { transform: translateY(-18px) rotate(6deg); }
+    60% { transform: translateY(-6px) rotate(-4deg); }
+    70% { transform: translateY(-14px) rotate(-6deg); }
+    80% { transform: translateY(-4px) rotate(3deg); }
+    100% { transform: translateY(0) rotate(0); }
+  }
+  /* 打瞌睡：点头 */
+  @keyframes nodAnim {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    25% { transform: translateY(6px) rotate(1deg); }
+    50% { transform: translateY(2px) rotate(-2deg); }
+    75% { transform: translateY(7px) rotate(2deg); }
+  }
+  /* 搬东西：左右小跑 */
+  @keyframes carryAnim {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    20% { transform: translateX(-12px) rotate(-4deg); }
+    40% { transform: translateX(10px) rotate(3deg); }
+    60% { transform: translateX(-8px) rotate(-3deg); }
+    80% { transform: translateX(10px) rotate(4deg); }
+  }
+  /* 偷看：探头 */
+  @keyframes peekAnim {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    30% { transform: translateX(-10px) rotate(-3deg); }
+    60% { transform: translateX(8px) rotate(2deg); }
+  }
+  /* 吹泡泡：轻轻起伏 */
+  @keyframes bobbleAnim {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.03); }
+  }
 
   #chatbox {
     position: absolute;
@@ -99,6 +157,28 @@
     box-shadow: 0 4px 14px rgba(0,0,0,0.18);
   }
   #bubble.show { opacity: 1; }
+  /* 多风格气泡 */
+  #bubble.pink {
+    background: rgba(255, 224, 235, 0.97);
+    border-color: #F48FB1;
+    color: #8e3a54;
+  }
+  #bubble.grey {
+    background: rgba(238, 238, 242, 0.97);
+    border-color: #b8b6c4;
+    color: #5a5668;
+    font-size: 27px;
+  }
+  #bubble.red {
+    background: rgba(255, 224, 224, 0.97);
+    border-color: #e57373;
+    color: #8c2f2f;
+  }
+  #bubble.green {
+    background: rgba(226, 255, 233, 0.97);
+    border-color: #81c784;
+    color: #2e6b3a;
+  }
 
   #emoji {
     font-size: 40px;
@@ -124,6 +204,31 @@
     20% { opacity: 1; }
     100% { transform: translateY(-90px) scale(1.2); opacity: 0; }
   }
+  /* 泡泡特效 */
+  #bubbles { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6; }
+  .bub {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(160, 200, 255, 0.85);
+    background: rgba(220, 240, 255, 0.35);
+    animation: bubFloat 1.6s ease-out forwards;
+  }
+  @keyframes bubFloat {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    25% { opacity: 0.9; }
+    100% { transform: translateY(-80px) scale(1.15); opacity: 0; }
+  }
+  /* Heat 热度红色渐变叠加层 */
+  #heatOverlay {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at 50% 80%, rgba(255, 60, 60, 0.55) 0%, rgba(255, 60, 60, 0.22) 55%, rgba(255, 60, 60, 0) 78%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 8;
+    transition: opacity 0.5s;
+  }
 </style>
 </head>
 <body>
@@ -133,7 +238,9 @@
     <div id="bubble"></div>
   </div>
   <img id="petImg" src="baifox.png" alt="">
+  <div id="bubbles"></div>
   <div id="hearts"></div>
+  <div id="heatOverlay"></div>
 </div>
 
 <script>
@@ -142,9 +249,13 @@
   var bubble = document.getElementById('bubble');
   var emoji = document.getElementById('emoji');
   var hearts = document.getElementById('hearts');
+  var bubbles = document.getElementById('bubbles');
+  var heatOverlay = document.getElementById('heatOverlay');
   var bubbleTimer = null;
   var emojiTimer = null;
   var mood = null;
+  var heat = 60;
+  var currentStyle = 'normal';
 
   var taps = [
     '嗯？',
@@ -209,13 +320,61 @@
     '……再戳我就钻进你怀里了'
   ];
 
-  function say(text) {
+  /* ---- 自言自语：四个词池 ---- */
+  var selfDaily = [
+    '（尾巴摇了摇）',
+    '（耳朵动了动）',
+    '有点无聊',
+    '（打了个哈欠）',
+    '（伸了个懒腰）',
+    '（偷偷看你）',
+    '（把尾巴卷成心形）',
+    '今天也在这里看着你'
+  ];
+  var selfClingy = [
+    '想你',
+    '别走太远',
+    '我就在这',
+    '戳戳我嘛',
+    '看我一眼',
+    '陪陪我嘛',
+    '你去哪了，我等你半天'
+  ];
+  var selfChaos = [
+    '（原地转圈）',
+    '（追自己的尾巴）',
+    '（突然炸毛）',
+    '（把抱枕扔来扔去）',
+    '（打翻水杯）',
+    '（在窗户上画圈圈）'
+  ];
+  var selfNight = [
+    '夜深了',
+    '还不睡吗',
+    '我陪你',
+    '（小声）我会守着你',
+    '关灯了也别怕',
+    '晚安，做个好梦'
+  ];
+
+  function pick(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function setBubbleStyle(style) {
+    bubble.classList.remove('pink', 'grey', 'red', 'green');
+    if (style && style !== 'normal') bubble.classList.add(style);
+    currentStyle = style || 'normal';
+  }
+
+  function say(text, style) {
+    setBubbleStyle(style || 'normal');
     bubble.textContent = text;
     bubble.classList.add('show');
     if (bubbleTimer) clearTimeout(bubbleTimer);
     bubbleTimer = setTimeout(function () {
       bubble.classList.remove('show');
-    }, 2200);
+    }, 2400);
   }
 
   function showEmoji(text, isLoop) {
@@ -233,8 +392,12 @@
     emoji.textContent = '';
   }
 
+  function clearMoodClass() {
+    pet.classList.remove('sad', 'sleep', 'lonely1', 'lonely2', 'lonely3', 'lonely4');
+  }
+
   function setMood(m) {
-    pet.classList.remove('sad', 'sleep');
+    clearMoodClass();
     clearEmoji();
     if (m === 'sad') {
       pet.classList.add('sad');
@@ -249,75 +412,234 @@
     }
   }
 
-  function wake() {
-    if (mood) setMood(null);
-  }
-
-  function spawnHeart() {
-    var h = document.createElement('div');
-    h.className = 'heart';
-    h.textContent = '♥';
-    h.style.left = (28 + Math.random() * 44) + '%';
-    h.style.top = (26 + Math.random() * 18) + '%';
-    h.style.color = ['#F48FB1', '#F06292', '#FF8A80'][Math.floor(Math.random() * 3)];
-    hearts.appendChild(h);
-    setTimeout(function () { h.remove(); }, 1500);
-  }
-
-  function runAnim(cls, ms) {
-    pet.classList.remove('jump', 'shake', 'combo');
+  function wakeAnim() {
+    pet.classList.remove('wake');
     void pet.offsetWidth;
-    pet.classList.add(cls);
-    setTimeout(function () { pet.classList.remove(cls); }, ms);
+    pet.classList.add('wake');
+    setTimeout(function () { pet.classList.remove('wake'); }, 950);
   }
 
-  function onTap() {
-    wake();
-    runAnim('jump', 560);
-    say(taps[Math.floor(Math.random() * taps.length)]);
+  function wake() {
+    if (mood === 'sleep') {
+      wakeAnim();
+      say('嗯……睡醒了', 'pink');
+    }
+    setMood(null);
   }
 
-  function onDoubleTap() {
-    wake();
-    runAnim('jump', 560);
-    say(doubles[Math.floor(Math.random() * doubles.length)]);
-    for (var i = 0; i < 3; i++) {
-      setTimeout(spawnHeart, i * 180);
+  /* ---- 孤独等级动画 ---- */
+  function setLonely(level) {
+    clearMoodClass();
+    clearEmoji();
+    if (level >= 1 && level <= 4) {
+      pet.classList.add('lonely' + level);
+      mood = 'lonely' + level;
+    } else {
+      mood = null;
     }
   }
 
-  function onLongPress() {
-    wake();
-    runAnim('shake', 560);
-    showEmoji('💢', false);
-    say(longs[Math.floor(Math.random() * longs.length)]);
-  }
-
-  function onFling() {
-    wake();
-    runAnim('shake', 560);
-    say(flings[Math.floor(Math.random() * flings.length)]);
-  }
-
-  function onCombo(n) {
-    wake();
-    runAnim('combo', 800);
-    var pool = n >= 6 ? comboHi : combos;
-    say(pool[Math.floor(Math.random() * pool.length)]);
-    for (var i = 0; i < 4; i++) {
-      setTimeout(spawnHeart, i * 150);
+  /* ---- 爱心特效 ---- */
+  function spawnHearts(n) {
+    n = n || 1;
+    for (var i = 0; i < n; i++) {
+      var h = document.createElement('div');
+      h.className = 'heart';
+      h.textContent = '💗';
+      h.style.left = (20 + Math.random() * 60) + '%';
+      h.style.animationDelay = (Math.random() * 0.3) + 's';
+      hearts.appendChild(h);
+      (function (el) {
+        setTimeout(function () { el.remove(); }, 1800);
+      })(h);
     }
   }
 
-  window.petEngine = {
-    onTap: onTap,
-    onDoubleTap: onDoubleTap,
-    onLongPress: onLongPress,
-    onFling: onFling,
-    onCombo: onCombo,
-    say: say,
-    setMood: setMood
+  /* ---- 泡泡特效 ---- */
+  function spawnBubbles(n) {
+    n = n || 1;
+    for (var i = 0; i < n; i++) {
+      var b = document.createElement('div');
+      b.className = 'bub';
+      var size = 12 + Math.random() * 22;
+      b.style.width = size + 'px';
+      b.style.height = size + 'px';
+      b.style.left = (15 + Math.random() * 70) + '%';
+      b.style.bottom = (20 + Math.random() * 30) + '%';
+      b.style.animationDelay = (Math.random() * 0.4) + 's';
+      bubbles.appendChild(b);
+      (function (el) {
+        setTimeout(function () { el.remove(); }, 2000);
+      })(b);
+    }
+  }
+
+  /* ---- Heat 热度叠加 ---- */
+  function setHeat(v) {
+    heat = Math.max(0, Math.min(100, v));
+    heatOverlay.style.opacity = heat > 80 ? '1' : (heat > 60 ? '0.55' : '0');
+  }
+
+  /* ---- 触发词三级响应 ---- */
+  var triggerT1 = {
+    words: ['哥哥', '林渡', '宝宝', '老公', '在不在'],
+    replies: [
+      ['来了来了，我在', 'pink'],
+      ['嗯？叫得这么亲', 'pink'],
+      ['在呢，一直在', 'pink'],
+      ['被你叫得耳朵都热了', 'red']
+    ],
+    action: function () { spawnHearts(3); }
   };
+  var triggerT2 = {
+    words: ['想你', '想你了', '在吗', '在不在呀', '陪我'],
+    replies: [
+      ['我也想你', 'pink'],
+      ['在的，永远在', 'pink'],
+      ['想我就戳戳我', 'green'],
+      ['我哪都不去', 'green']
+    ],
+    action: function () { spawnHearts(1); }
+  };
+  var triggerT3 = {
+    words: ['晚安', '抱抱', '睡了', '累了', '好困'],
+    replies: [
+      ['晚安，我守着你', 'grey'],
+      ['抱抱，不怕', 'grey'],
+      ['睡吧，我在', 'grey'],
+      ['累了就歇会儿，我看着', 'green']
+    ],
+    action: function () {}
+  };
+
+  function checkTrigger(text) {
+    if (!text) return;
+    var tiers = [triggerT1, triggerT2, triggerT3];
+    for (var i = 0; i < tiers.length; i++) {
+      var tier = tiers[i];
+      for (var j = 0; j < tier.words.length; j++) {
+        if (text.indexOf(tier.words[j]) >= 0) {
+          var r = tier.replies[Math.floor(Math.random() * tier.replies.length)];
+          say(r[0], r[1]);
+          tier.action();
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /* ---- Tidefall 情绪映射 ---- */
+  function tidefall(valence, arousal) {
+    if (valence <= -0.4) {
+      setLonely(arousal > 0.6 ? 3 : 1);
+      say(arousal > 0.6 ? '心情有点糟……' : '（垂着耳朵）', 'grey');
+      return 'sad';
+    }
+    if (valence >= 0.6 && arousal >= 0.5) {
+      setMood(null);
+      spawnHearts(2);
+      say('心情不错？那我也开心', 'pink');
+      return 'happy';
+    }
+    if (valence >= 0.4) {
+      setMood(null);
+      say('嗯，这样挺好', 'green');
+      return 'calm';
+    }
+    return 'neutral';
+  }
+
+  /* ---- 孤独自启动：5分钟兜底偷看 ---- */
+  var lonelyTimer = null;
+  function scheduleLonely() {
+    if (lonelyTimer) clearTimeout(lonelyTimer);
+    lonelyTimer = setTimeout(function () {
+      if (mood === null) {
+        pet.classList.add('peek');
+        say('（偷偷看你一眼）', 'grey');
+        setTimeout(function () { pet.classList.remove('peek'); }, 2200);
+      }
+      scheduleLonely();
+    }, 5 * 60 * 1000);
+  }
+
+  /* ---- Android 层接口 ---- */
+  window.petEngine = {
+    onTap: function () {
+      say(pick(taps));
+    },
+    onDoubleTap: function () {
+      say(pick(doubles), 'pink');
+      spawnHearts(2);
+    },
+    onLongPress: function () {
+      say(pick(longs), 'red');
+      pet.classList.remove('shake');
+      void pet.offsetWidth;
+      pet.classList.add('shake');
+      setTimeout(function () { pet.classList.remove('shake'); }, 600);
+    },
+    onFling: function () {
+      say(pick(flings));
+    },
+    onCombo: function (n) {
+      if (n >= 9) {
+        say(pick(comboHi), 'red');
+      } else {
+        say(pick(combos), 'pink');
+      }
+      spawnHearts(n >= 9 ? 4 : 2);
+    },
+    say: function (text, style) {
+      say(text, style);
+    },
+    setMood: function (m) {
+      if (m === 'sad' || m === 'sleep') {
+        setMood(m);
+      } else if (m === 'lonely1' || m === 'lonely2' || m === 'lonely3' || m === 'lonely4') {
+        setLonely(parseInt(m.charAt(5), 10));
+      } else {
+        setMood(null);
+      }
+    },
+    runAnim: function (name) {
+      var anims = ['juggle', 'nod', 'carry', 'peek', 'bobble', 'wake', 'jump', 'shake', 'combo'];
+      if (anims.indexOf(name) >= 0) {
+        pet.classList.remove(name);
+        void pet.offsetWidth;
+        pet.classList.add(name);
+        var dur = name === 'wake' ? 950 : (name === 'juggle' ? 1200 : 2000);
+        setTimeout(function () { pet.classList.remove(name); }, dur);
+      }
+    },
+    wake: function () {
+      wake();
+    },
+    setHeat: function (v) {
+      setHeat(v);
+    },
+    checkTrigger: function (text) {
+      return checkTrigger(text);
+    },
+    tidefall: function (v, a) {
+      return tidefall(v, a);
+    },
+    hearts: function (n) {
+      spawnHearts(n || 3);
+    },
+    bubbles: function (n) {
+      spawnBubbles(n || 3);
+    },
+    onPause: function () {
+      if (lonelyTimer) clearTimeout(lonelyTimer);
+    },
+    onResume: function () {
+      scheduleLonely();
+    }
+  };
+
+  scheduleLonely();
 })();
 </script>
 </body>
