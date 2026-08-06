@@ -21,205 +21,165 @@
     align-items: flex-end;
     justify-content: center;
   }
-  #pet {
-    width: 90%;
-    height: 94%;
+  #petImg {
+    width: 94%;
+    height: 97%;
+    object-fit: contain;
     transform-origin: 50% 100%;
     animation: float 3.2s ease-in-out infinite;
+    -webkit-user-drag: none;
   }
-  #pet.jump { animation: jump 0.55s ease-out; }
-  #pet.angry .ear-l { animation: earAngryL 0.8s ease-out forwards; }
-  #pet.angry .ear-r { animation: earAngryR 0.8s ease-out forwards; }
-  #pet.angry #mouth { d: path("M92,146 Q100,138 108,146"); }
-  #pet.angry #browL { opacity: 1; transform: rotate(14deg); }
-  #pet.angry #browR { opacity: 1; transform: rotate(-14deg); }
+  #petImg.jump  { animation: jump 0.55s ease-out; }
+  #petImg.shake { animation: shake 0.55s ease-out; }
+  #petImg.combo { animation: combo 0.8s ease-out; }
+  #petImg.sad   { animation: sadSway 2.6s ease-in-out infinite; filter: saturate(0.72) brightness(0.97); }
+  #petImg.sleep { animation: sleepBob 3.2s ease-in-out infinite; filter: brightness(0.82) saturate(0.55); }
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-7px); }
+    50% { transform: translateY(-8px); }
   }
   @keyframes jump {
     0% { transform: translateY(0) scale(1, 1); }
-    30% { transform: translateY(-26px) scale(0.98, 1.02); }
-    60% { transform: translateY(0) scale(1.05, 0.94); }
-    80% { transform: translateY(-8px) scale(1, 1); }
+    30% { transform: translateY(-34px) scale(0.97, 1.03); }
+    60% { transform: translateY(0) scale(1.06, 0.92); }
+    80% { transform: translateY(-10px) scale(1, 1); }
     100% { transform: translateY(0) scale(1, 1); }
   }
-  @keyframes blink {
-    0%, 92%, 100% { transform: scaleY(1); }
-    96% { transform: scaleY(0.08); }
+  @keyframes shake {
+    0% { transform: translateX(0) rotate(0deg); }
+    20% { transform: translateX(-18px) rotate(-6deg); }
+    40% { transform: translateX(16px) rotate(5deg); }
+    60% { transform: translateX(-12px) rotate(-4deg); }
+    80% { transform: translateX(8px) rotate(3deg); }
+    100% { transform: translateX(0) rotate(0deg); }
   }
-  @keyframes tailWag {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-14deg); }
+  @keyframes combo {
+    0% { transform: translateY(0) scale(1); }
+    15% { transform: translateY(-26px) scale(1.08, 0.94) rotate(-4deg); }
+    35% { transform: translateY(0) scale(0.96, 1.05) rotate(3deg); }
+    55% { transform: translateY(-18px) scale(1.06, 0.95) rotate(-3deg); }
+    75% { transform: translateY(0) scale(1.02, 0.98) rotate(2deg); }
+    100% { transform: translateY(0) scale(1) rotate(0deg); }
   }
-  @keyframes earTwitch {
-    0%, 100% { transform: rotate(0deg); }
-    90% { transform: rotate(0deg); }
-    93% { transform: rotate(-8deg); }
-    96% { transform: rotate(0deg); }
+  @keyframes sadSway {
+    0%, 100% { transform: translateY(6px) rotate(-1.5deg); }
+    50% { transform: translateY(2px) rotate(1.5deg); }
   }
-  @keyframes earAngryL {
-    0% { transform: rotate(0); }
-    100% { transform: rotate(-16deg); }
+  @keyframes sleepBob {
+    0%, 100% { transform: translateY(4px) scale(1, 1); }
+    50% { transform: translateY(2px) scale(1, 0.985); }
   }
-  @keyframes earAngryR {
-    0% { transform: rotate(0); }
-    100% { transform: rotate(16deg); }
-  }
-  @keyframes heartFloat {
-    0% { transform: translateY(0) scale(0.4); opacity: 0; }
-    20% { opacity: 1; }
-    100% { transform: translateY(-80px) scale(1.15); opacity: 0; }
-  }
-  #tail { transform-origin: 132px 182px; animation: tailWag 1.6s ease-in-out infinite; }
-  .eye { transform-origin: center; animation: blink 4.2s infinite; }
-  .ear-l { transform-origin: 74px 68px; animation: earTwitch 5.5s ease-in-out infinite; }
-  .ear-r { transform-origin: 126px 68px; animation: earTwitch 6.3s ease-in-out infinite; }
-  #browL, #browR { opacity: 0; transition: transform 0.3s, opacity 0.3s; }
-  #browL { transform-origin: 79px 104px; }
-  #browR { transform-origin: 121px 104px; }
-  #blush { opacity: 0.45; transition: opacity 0.3s; }
-  #pet.flush #blush { opacity: 0.95; }
 
   #bubble {
     position: absolute;
-    left: 50%; top: 2%;
+    left: 50%; top: 0%;
     transform: translateX(-50%);
-    max-width: 96%;
-    background: rgba(255, 255, 255, 0.96);
-    border: 2px solid #d8d3e8;
-    border-radius: 16px;
-    padding: 10px 14px;
-    font-size: 21px;
-    font-weight: 600;
-    line-height: 1.3;
+    max-width: 98%;
+    background: rgba(255, 255, 255, 0.97);
+    border: 2.5px solid #d8d3e8;
+    border-radius: 18px;
+    padding: 13px 18px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.35;
     text-align: center;
     color: #3a3450;
     white-space: normal;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    transition: opacity 0.22s;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    z-index: 5;
   }
   #bubble.show { opacity: 1; }
-  #hearts { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+
+  #emoji {
+    position: absolute;
+    left: 50%;
+    top: -2%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  #emoji.show { opacity: 1; }
+  #emoji.zzz { animation: zzzFloat 1.8s ease-in-out infinite; }
+  @keyframes zzzFloat {
+    0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+    50% { transform: translateX(-50%) translateY(-10px) scale(1.15); }
+  }
+
+  #hearts { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 7; }
   .heart {
     position: absolute;
-    font-size: 24px;
+    font-size: 32px;
     animation: heartFloat 1.4s ease-out forwards;
+  }
+  @keyframes heartFloat {
+    0% { transform: translateY(0) scale(0.4); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(-90px) scale(1.2); opacity: 0; }
   }
 </style>
 </head>
 <body>
 <div id="stage">
   <div id="bubble"></div>
-  <svg id="pet" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="faceGrad" cx="50%" cy="40%" r="60%">
-        <stop offset="0%" stop-color="#FFFFFF"/>
-        <stop offset="100%" stop-color="#FDF1EB"/>
-      </radialGradient>
-      <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#FFFFFF"/>
-        <stop offset="100%" stop-color="#F7F2FA"/>
-      </linearGradient>
-    </defs>
-
-    <!-- 大尾巴 -->
-    <g id="tail">
-      <path d="M130,185 Q178,180 180,128 Q180,100 156,96 Q142,93 138,112 Q132,140 126,160 Q122,175 126,185 Z"
-            fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.6"/>
-      <path d="M152,116 Q146,138 138,158" fill="none" stroke="#EAE4F2" stroke-width="2.4" stroke-linecap="round"/>
-    </g>
-
-    <!-- 狐耳（左） -->
-    <g class="ear-l">
-      <path d="M82,70 Q62,26 42,40 Q34,48 44,62 Q54,74 66,80 Z"
-            fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.6"/>
-      <path d="M74,66 Q60,40 50,48 Q46,52 53,62 Q60,70 68,74 Z"
-            fill="#F6C0CE"/>
-    </g>
-    <!-- 狐耳（右） -->
-    <g class="ear-r">
-      <path d="M118,70 Q138,26 158,40 Q166,48 156,62 Q146,74 134,80 Z"
-            fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.6"/>
-      <path d="M126,66 Q140,40 150,48 Q154,52 147,62 Q140,70 132,74 Z"
-            fill="#F6C0CE"/>
-    </g>
-
-    <!-- 身体（坐姿） -->
-    <path d="M62,152 Q56,190 68,204 Q82,214 100,214 Q118,214 132,204 Q144,190 138,152 Z"
-          fill="url(#bodyGrad)" stroke="#EAE4F2" stroke-width="1.6"/>
-    <!-- 肚皮 -->
-    <ellipse cx="100" cy="190" rx="26" ry="20" fill="#FFF9F5"/>
-    <!-- 前爪 -->
-    <ellipse cx="79" cy="207" rx="11" ry="9" fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.3"/>
-    <ellipse cx="121" cy="207" rx="11" ry="9" fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.3"/>
-    <path d="M75,210 L75,204 M79,211 L79,205 M83,210 L83,204" stroke="#E3DCF0" stroke-width="1.2" stroke-linecap="round"/>
-    <path d="M117,210 L117,204 M121,211 L121,205 M125,210 L125,204" stroke="#E3DCF0" stroke-width="1.2" stroke-linecap="round"/>
-
-    <!-- 头 -->
-    <ellipse cx="100" cy="110" rx="46" ry="42" fill="url(#faceGrad)"/>
-    <!-- 头顶毛撮 -->
-    <path d="M88,72 Q94,58 100,64 Q106,58 112,72 Q106,66 100,68 Q94,66 88,72 Z"
-          fill="#FFFFFF" stroke="#EAE4F2" stroke-width="1.2"/>
-
-    <!-- 眉毛（生气时显示） -->
-    <line id="browL" x1="70" y1="106" x2="88" y2="103" stroke="#C9A98F" stroke-width="2.6" stroke-linecap="round"/>
-    <line id="browR" x1="112" y1="103" x2="130" y2="106" stroke="#C9A98F" stroke-width="2.6" stroke-linecap="round"/>
-
-    <!-- 眼睛 -->
-    <g class="eye">
-      <ellipse cx="83" cy="118" rx="6.5" ry="8" fill="#D99A3D"/>
-      <ellipse cx="83" cy="115" rx="2.4" ry="2.8" fill="#FFFFFF"/>
-      <ellipse cx="83" cy="122" rx="1.8" ry="2" fill="#7A4E14"/>
-    </g>
-    <g class="eye">
-      <ellipse cx="117" cy="118" rx="6.5" ry="8" fill="#D99A3D"/>
-      <ellipse cx="117" cy="115" rx="2.4" ry="2.8" fill="#FFFFFF"/>
-      <ellipse cx="117" cy="122" rx="1.8" ry="2" fill="#7A4E14"/>
-    </g>
-
-    <!-- 腮红（眼下外侧） -->
-    <g id="blush">
-      <ellipse cx="70" cy="134" rx="9.5" ry="5.5" fill="#F8A8B8"/>
-      <ellipse cx="130" cy="134" rx="9.5" ry="5.5" fill="#F8A8B8"/>
-    </g>
-
-    <!-- 鼻子 -->
-    <ellipse cx="100" cy="135" rx="3.6" ry="2.9" fill="#E88A9A"/>
-    <!-- 嘴 -->
-    <path id="mouth" d="M91,144 Q95,149 100,144 Q105,149 109,144" fill="none" stroke="#B97A4A"
-          stroke-width="2.4" stroke-linecap="round"/>
-  </svg>
+  <div id="emoji"></div>
+  <img id="petImg" src="baifox.png" alt="">
   <div id="hearts"></div>
 </div>
 
 <script>
 (function () {
-  var pet = document.getElementById('pet');
+  var pet = document.getElementById('petImg');
   var bubble = document.getElementById('bubble');
+  var emoji = document.getElementById('emoji');
   var hearts = document.getElementById('hearts');
   var bubbleTimer = null;
-  var angryTimer = null;
+  var emojiTimer = null;
+  var mood = null;
 
   var taps = [
     '嗯？',
     '有事？',
     '戳我干嘛',
-    '别闹'
+    '别闹',
+    '摸够了吗'
   ];
   var doubles = [
-    '耳朵只有你能碰',
+    '这么喜欢我？',
     '……记下了',
-    '你倒是会挑地方戳'
+    '你倒是会挑地方戳',
+    '心跳被你戳乱了'
   ];
   var longs = [
     '属狗的吗',
     '……疼',
     '我记仇了',
     '再按还手了'
+  ];
+  var flings = [
+    '甩来甩去，我是皮球吗',
+    '轻点！毛要掉了',
+    '……你当我在荡秋千？',
+    '扔坏了你负责'
+  ];
+  var combos = [
+    '连击！手速不错嘛',
+    '戳上瘾了？',
+    '再戳我就跟你回家',
+    '这么多下，手不酸吗'
+  ];
+  var comboHi = [
+    '疯了疯了',
+    '你是戳戳机器人吗',
+    '够了！我头晕',
+    '行行行，你赢了'
   ];
 
   function say(text) {
@@ -228,49 +188,108 @@
     if (bubbleTimer) clearTimeout(bubbleTimer);
     bubbleTimer = setTimeout(function () {
       bubble.classList.remove('show');
-    }, 1700);
+    }, 2200);
+  }
+
+  function showEmoji(text, isLoop) {
+    emoji.textContent = text;
+    emoji.className = isLoop ? 'show zzz' : 'show';
+    if (emojiTimer) clearTimeout(emojiTimer);
+    emojiTimer = setTimeout(function () {
+      emoji.className = '';
+      emoji.textContent = '';
+    }, isLoop ? 0 : 1800);
+  }
+
+  function clearEmoji() {
+    emoji.className = '';
+    emoji.textContent = '';
+  }
+
+  function setMood(m) {
+    pet.classList.remove('sad', 'sleep');
+    clearEmoji();
+    if (m === 'sad') {
+      pet.classList.add('sad');
+      showEmoji('💧', false);
+      mood = 'sad';
+    } else if (m === 'sleep') {
+      pet.classList.add('sleep');
+      showEmoji('💤', true);
+      mood = 'sleep';
+    } else {
+      mood = null;
+    }
+  }
+
+  function wake() {
+    if (mood) setMood(null);
   }
 
   function spawnHeart() {
     var h = document.createElement('div');
     h.className = 'heart';
     h.textContent = '♥';
-    h.style.left = (30 + Math.random() * 40) + '%';
-    h.style.top = (30 + Math.random() * 15) + '%';
+    h.style.left = (28 + Math.random() * 44) + '%';
+    h.style.top = (26 + Math.random() * 18) + '%';
     h.style.color = ['#F48FB1', '#F06292', '#FF8A80'][Math.floor(Math.random() * 3)];
     hearts.appendChild(h);
     setTimeout(function () { h.remove(); }, 1500);
   }
 
-  function onTap() {
-    pet.classList.remove('jump');
+  function runAnim(cls, ms) {
+    pet.classList.remove('jump', 'shake', 'combo');
     void pet.offsetWidth;
-    pet.classList.add('jump');
+    pet.classList.add(cls);
+    setTimeout(function () { pet.classList.remove(cls); }, ms);
+  }
+
+  function onTap() {
+    wake();
+    runAnim('jump', 560);
     say(taps[Math.floor(Math.random() * taps.length)]);
   }
 
   function onDoubleTap() {
-    pet.classList.add('flush');
+    wake();
+    runAnim('jump', 560);
     say(doubles[Math.floor(Math.random() * doubles.length)]);
     for (var i = 0; i < 3; i++) {
       setTimeout(spawnHeart, i * 180);
     }
-    setTimeout(function () { pet.classList.remove('flush'); }, 2200);
   }
 
   function onLongPress() {
-    pet.classList.add('angry');
+    wake();
+    runAnim('shake', 560);
+    showEmoji('💢', false);
     say(longs[Math.floor(Math.random() * longs.length)]);
-    if (angryTimer) clearTimeout(angryTimer);
-    angryTimer = setTimeout(function () {
-      pet.classList.remove('angry');
-    }, 2500);
+  }
+
+  function onFling() {
+    wake();
+    runAnim('shake', 560);
+    say(flings[Math.floor(Math.random() * flings.length)]);
+  }
+
+  function onCombo(n) {
+    wake();
+    runAnim('combo', 800);
+    var pool = n >= 6 ? comboHi : combos;
+    say(pool[Math.floor(Math.random() * pool.length)]);
+    for (var i = 0; i < 4; i++) {
+      setTimeout(spawnHeart, i * 150);
+    }
   }
 
   window.petEngine = {
     onTap: onTap,
     onDoubleTap: onDoubleTap,
-    onLongPress: onLongPress
+    onLongPress: onLongPress,
+    onFling: onFling,
+    onCombo: onCombo,
+    say: say,
+    setMood: setMood
   };
 })();
 </script>

@@ -15,9 +15,22 @@ android {
         versionName = "1.0"
     }
 
+    signingConfigs {
+        create("fixed") {
+            storeFile = file("../keystore/deskpet.keystore")
+            storePassword = "deskpet123"
+            keyAlias = "deskpet"
+            keyPassword = "deskpet123"
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("fixed")
+        }
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("fixed")
         }
     }
 
