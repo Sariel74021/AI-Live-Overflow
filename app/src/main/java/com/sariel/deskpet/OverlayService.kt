@@ -13,6 +13,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.BatteryManager
+import android.util.Log
 import android.os.Build
 import android.os.FileObserver
 import android.os.Handler
@@ -81,6 +82,7 @@ class OverlayService : Service() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 // 页面加载完成后主动检查充电状态（服务启动时已在充电则收不到广播）
+                Log.d("DeskPet", "onPageFinished: $url")
                 checkChargingOnStart()
             }
         }
@@ -205,13 +207,17 @@ class OverlayService : Service() {
             val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
             val status = registerReceiver(null, filter)
                 ?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+            Log.d("DeskPet", "checkChargingOnStart: status=$status heat=$heat")
             val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                 status == BatteryManager.BATTERY_STATUS_FULL
             if (isCharging) {
                 interact(8)
+                Log.d("DeskPet", "checkChargingOnStart: charging, heat now $heat")
                 evaluateJs("window.petEngine && window.petEngine.setHeat && window.petEngine.setHeat($heat) && window.petEngine.say && window.petEngine.say('充电中，我陪你')")
+                Log.d("DeskPet", "checkChargingOnStart: evaluateJs sent")
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e("DeskPet", "checkChargingOnStart error", e)
         }
     }
 
