@@ -515,7 +515,23 @@
     window.__heatDebug.computedOpacity = cs.opacity;
     window.__heatDebug.maskImage = cs.webkitMaskImage || cs.maskImage || cs['-webkit-mask-image'] || 'none';
     window.__heatDebug.overlayFound = !!heatOverlay;
+    window.__heatDebug.el = { display: cs.display, visibility: cs.visibility, w: heatOverlay.offsetWidth, h: heatOverlay.offsetHeight, parentDisplay: getComputedStyle(heatOverlay.parentElement).display, z: cs.zIndex };
+    // 对照实验：临时去掉mask后computed opacity是否恢复
+    var om = heatOverlay.style.webkitMaskImage || heatOverlay.style.maskImage;
+    heatOverlay.style.webkitMaskImage = 'none';
+    heatOverlay.style.maskImage = 'none';
+    window.__heatDebug.noMaskOpacity = getComputedStyle(heatOverlay).opacity;
+    heatOverlay.style.webkitMaskImage = om || '';
+    heatOverlay.style.maskImage = om || '';
+    window.__heatDebug.restoredOpacity = getComputedStyle(heatOverlay).opacity;
   }
+  // mask图加载检测（延迟到图片加载完读）
+  (function () {
+    var im = new Image();
+    im.onload = function () { window.__heatDebug.maskLoad = 'ok:' + im.naturalWidth + 'x' + im.naturalHeight; };
+    im.onerror = function () { window.__heatDebug.maskLoad = 'ERROR'; };
+    im.src = 'baifox_mask.png';
+  })();
 
   /* ---- 触发词三级响应 ---- */
   var triggerT1 = {
